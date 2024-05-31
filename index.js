@@ -1,12 +1,24 @@
-const http = require('http');
-const PORT = 3000;
+const express = require('express');
+const fs = require('fs');
+const cors = require('cors');
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World!');
+const app = express();
+const port = 3000;
+
+app.use(cors());
+
+// Read messages from JSON file
+const messages = JSON.parse(fs.readFileSync('messages.json', 'utf8'));
+
+// Endpoint to get a random message
+app.get('/random-message', (req, res) => {
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    const randomMessage = messages[randomIndex];
+    console.log(randomMessage.sender)
+    console.log(randomMessage.message)
+    res.json(randomMessage);
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
